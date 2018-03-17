@@ -43,10 +43,10 @@ ngx.decode_base64url = function (s)
     local dst = ngx_str_t(dlen, d)
     -- print("dlen: ", tonumber(dlen))
     local r = C.ngx_decode_base64url(dst, src)
-    if ok ~= 0 then
+    if r ~= 0 then
         return nil
     end
-    return ffi_string(dst.data, dst.len)
+    return ffi.string(dst.data, dst.len)
 end
 
 
