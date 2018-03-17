@@ -10,10 +10,29 @@ ngx.HTTP_PAYLOAD_TOO_LARGE = 413
 local ct_doh = 'application/dns-udpwireformat'
 
 local function err(n)
-   return ngx.throw_error(ngx[n])
+   ngx.throw_error(ngx[n])
+   error(n)
+end
+
+local function moan(msg)
+   ngx.log(ngx.ERR, msg)
+end
+
+local function die(msg)
+   moan(msg)
+   return err 'HTTP_INTERNAL_SERVER_ERROR'
+end
+
+local function check(what, ok, msg)
+   if not ok then
+      return die(what..": "..msg)
+   else
+      return ok
+   end
 end
 
 local function dodoh(q)
+   local ok, msg
    local qlen = #q
    if qlen > 65535 then
       return err 'HTTP_PAYLOAD_TOO_LARGE'
@@ -21,7 +40,18 @@ local function dodoh(q)
    -- DNS-over-TCP query length
    local ql = string.char((qlen / 256) % 256, qlen % 256)
    q = ql..q
-   return ngx.say(q)
+   local s = ngx.socket.tcp()
+   s:settimeout(10000) -- milliseconds
+   check('connect', s:connect("131.111.57.57", 53))
+   check('sent', s:send(q))
+   moan('sent')
+   local rl = check('receive 2', s:receive(2))
+   local hi, lo = string.byte(rl, 1,2)
+   local rlen = hi * 256 + lo
+   moan('getting '..tostring(rlen))
+   local r = check('receive N', s:receive(rlen))
+   moan('got')
+   return ngx.say(r)
 end
 
 local function doh_get()
@@ -31,7 +61,6 @@ local function doh_get()
       return err 'HTTP_UNSUPPORTED_MEDIA_TYPE'
    end
    if not q.dns then
-      ngx.log(ngx.ERR, "bar")
       -- what error to return in this case?
       return err 'HTTP_TEAPOT'
    end
