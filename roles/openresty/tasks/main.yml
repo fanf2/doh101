@@ -61,7 +61,10 @@
     dest: /usr/local/openresty/nginx/conf/nginx.conf
   notify:
     restart nginx
-- name: lua doh
+- name: install lua modules
   copy:
-    src: doh.lua
-    dest: /usr/local/openresty/lualib/doh.lua
+    src: "{{item}}.lua"
+    dest: /usr/local/openresty/lualib/{{item}}.lua
+  with_items:
+    - doh
+    - inspect
