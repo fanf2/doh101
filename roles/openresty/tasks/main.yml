@@ -61,3 +61,7 @@
     dest: /usr/local/openresty/nginx/conf/nginx.conf
   notify:
     restart nginx
+- name: lua doh
+  copy:
+    src: doh.lua
+    dest: /usr/local/openresty/lualib/doh.lua
