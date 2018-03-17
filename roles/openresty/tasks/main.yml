@@ -1,0 +1,24 @@
+---
+- name: remove apache2
+  apt:
+    name: apache2
+    state: absent
+    purge: yes
+    autoremove: yes
+    autoclean: yes
+- name: apt openresty key
+  apt_key:
+    id: 97DB7443D5EDEB74
+    url: https://www.openresty.org/package/pubkey.gpg
+- name: apt openresty repo
+  copy:
+    src:  apt-openresty
+    dest: /etc/apt/sources.list.d/openresty.list
+- name: install openresty
+  apt:
+    name: "{{item}}"
+    update_cache: yes
+    install_recommends: yes
+  with_items:
+    - openresty
+    - openresty-restydoc
