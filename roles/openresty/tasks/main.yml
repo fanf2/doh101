@@ -39,3 +39,17 @@
   copy:
     content: "{{inventory_hostname}}\n"
     dest: /etc/dehydrated/domains.txt
+- name: certificate links
+  file:
+    state: link
+    src: /var/lib/dehydrated/certs/{{inventory_hostname}}/{{item.src}}
+    dest: /usr/local/openresty/nginx/conf/{{item.dest}}
+  with_items:
+    - src: fullchain.pem
+      dest: cert.pem
+    - src: privkey.pem
+      dest: cert.key
+- name: nginx config
+  copy:
+    src: nginx.conf
+    dest: /usr/local/openresty/nginx/conf/nginx.conf
