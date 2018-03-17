@@ -17,8 +17,7 @@ case "$1" in
 	update del "$2" "$4"
         ;;
 "deploy_cert")
-        # optional:
-        # /path/to/deploy_cert.sh "$@"
+	service openresty reload
         ;;
 "unchanged_cert")
         # do nothing for now
