@@ -12,9 +12,12 @@ local function err(n)
    return ngx.throw_error(ngx[n])
 end
 
+local function dodoh(q)
+   return ngx.say(q)
+end
+
 local function doh_get()
    local q = r.get_query_args()
-   ngx.log(ngx.ERR, inspect(q))
    if q.ct ~= true -- present but no value
    and q.ct ~= ct_doh then
       return err 'HTTP_UNSUPPORTED_MEDIA_TYPE'
@@ -24,7 +27,7 @@ local function doh_get()
       -- what error to return in this case?
       return err 'HTTP_TEAPOT'
    end
-   ngx.say(ngx.decode_base64url(q.dns))
+   return dodoh(ngx.decode_base64url(q.dns))
 end
 
 local function doh_post()
@@ -33,7 +36,7 @@ local function doh_post()
       return err 'HTTP_UNSUPPORTED_MEDIA_TYPE'
    end
    r.read_body()
-   ngx.say(r.get_body_data())
+   return dodoh(r.get_body_data())
 end
 
 local method = r.get_method()
