@@ -3,6 +3,8 @@ local r = ngx.req
 
 ngx.HTTP_UNSUPPORTED_MEDIA_TYPE = 415
 
+local ct_doh = 'application/dns-udpwireformat'
+
 local function err(n)
    return ngx.throw_error(ngx[n])
 end
@@ -13,9 +15,11 @@ end
 
 local function doh_post()
    local h = r.get_headers()
-   if h['content-type'] ~= 'application/dns-udpwireformat' then
+   if h['content-type'] ~= ct_doh then
       return err 'HTTP_UNSUPPORTED_MEDIA_TYPE'
    end
+   r.read_body()
+   ngx.say(r.get_body_data())
 end
 
 local method = r.get_method()
