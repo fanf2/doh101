@@ -20,5 +20,22 @@
     update_cache: yes
     install_recommends: yes
   with_items:
+    - dehydrated
     - openresty
     - openresty-restydoc
+- name: install dehydrated config
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    mode: 0755
+  with_items:
+    - src: dehydrated-nsupdate.sh
+      dest: /etc/dehydrated/nsupdate.sh
+    - src: dehydrated-dns.sh
+      dest: /etc/dehydrated/conf.d/dns.sh
+    - src: dehydrated-cron.sh
+      dest: /etc/cron.hourly/dehydrated
+- name: dehydrated hostname
+  copy:
+    content: "{{inventory_hostname}}\n"
+    dest: /etc/dehydrated/domains.txt
