@@ -5,6 +5,7 @@ require "base64url"
 
 ngx.HTTP_UNSUPPORTED_MEDIA_TYPE = 415
 ngx.HTTP_TEAPOT = 418
+ngx.HTTP_PAYLOAD_TOO_LARGE = 413
 
 local ct_doh = 'application/dns-udpwireformat'
 
@@ -13,6 +14,13 @@ local function err(n)
 end
 
 local function dodoh(q)
+   local qlen = #q
+   if qlen > 65535 then
+      return err 'HTTP_PAYLOAD_TOO_LARGE'
+   end
+   -- DNS-over-TCP query length
+   local ql = string.char((qlen / 256) % 256, qlen % 256)
+   q = ql..q
    return ngx.say(q)
 end
 
