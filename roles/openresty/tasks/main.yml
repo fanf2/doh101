@@ -14,13 +14,19 @@
   copy:
     src:  apt-openresty
     dest: /etc/apt/sources.list.d/openresty.list
-- name: install openresty
+- name: install packages
   apt:
     name: "{{item}}"
     update_cache: yes
     install_recommends: yes
   with_items:
+    - build-essential
+    - check
     - dehydrated
+    - libidn11-dev
+    - libidn2-0-dev
+    - libssl-dev
+    - libunbound-dev
     - openresty
     - openresty-restydoc
 - name: install dehydrated config

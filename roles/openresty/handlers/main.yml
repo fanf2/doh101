@@ -1,0 +1,5 @@
+---
+- name: restart nginx
+  service:
+    name: openresty
+    state: restarted
