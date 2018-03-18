@@ -41,7 +41,8 @@ local function dodoh(q)
    q = ql..q
    local s = ngx.socket.tcp()
    s:settimeout(10000) -- milliseconds
-   check('connect', s:connect("131.111.57.57", 53))
+   moan('connecting to '..ngx.var.resolver)
+   check('connect', s:connect(ngx.var.resolver, 53))
    check('sent', s:send(q))
    moan('sent')
    local rl = check('receive 2', s:receive(2))
