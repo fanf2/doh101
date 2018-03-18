@@ -29,6 +29,8 @@
       dest: /etc/dehydrated/conf.d/dns.sh
     - src: dehydrated-cron.sh
       dest: /etc/cron.hourly/dehydrated
+    - src: dehydrated-nsupdate.key
+      dest: /etc/dehydrated/nsupdate.key
 - name: dehydrated hostname
   copy:
     content: "{{inventory_hostname}}\n"
