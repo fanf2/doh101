@@ -32,6 +32,10 @@
   copy:
     content: "{{inventory_hostname}}\n"
     dest: /etc/dehydrated/domains.txt
+- name: initialize dehydrated
+  command: dehydrated -c
+  args:
+    creates: /var/lib/dehydrated/certs/{{inventory_hostname}}/cert.pem
 - name: certificate links
   file:
     state: link
