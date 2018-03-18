@@ -59,4 +59,3 @@
   with_items:
     - doh
     - base64url
-    - inspect

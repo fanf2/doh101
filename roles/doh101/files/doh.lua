@@ -1,4 +1,3 @@
-local inspect = require "inspect"
 local r = ngx.req
 
 require "base64url"
