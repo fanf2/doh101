@@ -58,4 +58,5 @@
     dest: /usr/local/openresty/lualib/{{item}}.lua
   with_items:
     - doh
+    - base64url
     - inspect
