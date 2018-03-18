@@ -92,6 +92,18 @@ Example:
         ./doh.pl -k https://your.doh.server.name/doh example.com NS
 
 
+TODO
+----
+
+The `doh.lua` proxy is currently a bare minimum proof of concept. It
+uses a short TCP connection to the DNS resolver for each HTTPS request.
+
+It would be much better to use one or more persistent shared TCP
+connection(s) to the resolver, and multiplex requests from HTTPS onto
+them. Let me know if you are an NGINX / OpenResty expert who would
+like to help!
+
+
 Meta
 ----
 
