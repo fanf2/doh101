@@ -1,11 +1,4 @@
 ---
-- name: remove apache2
-  apt:
-    name: apache2
-    state: absent
-    purge: yes
-    autoremove: yes
-    autoclean: yes
 - name: apt openresty key
   apt_key:
     id: 97DB7443D5EDEB74
@@ -20,13 +13,7 @@
     update_cache: yes
     install_recommends: yes
   with_items:
-    - build-essential
-    - check
     - dehydrated
-    - libidn11-dev
-    - libidn2-0-dev
-    - libssl-dev
-    - libunbound-dev
     - openresty
     - openresty-restydoc
 - name: install dehydrated config
