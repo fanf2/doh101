@@ -50,8 +50,10 @@ local function dodoh(q)
    local rlen = hi * 256 + lo
    moan('getting '..tostring(rlen))
    local r = check('receive N', s:receive(rlen))
-   moan('got')
-   return ngx.say(r)
+   moan('got '..#r)
+   ngx.header.Content_Type = ct_doh;
+   ngx.header.Content_Length = tostring(rlen);
+   return ngx.print(r)
 end
 
 local function doh_get()
