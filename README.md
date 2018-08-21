@@ -16,12 +16,7 @@ Preparation
 This role was developed for a Debian 9 "Stretch" VM.
 
 You need to edit `inventory.yml` to change `your.doh.server.name` to
-your VM's actual name. Note that you need a colon `:` at the end of
-the line.
-
-You can optionally change the `resolver` setting in `inventory.yml` to
-use a different DNS server instead of the default Unbound resolver on
-the DoH VM.
+your VM's actual name.
 
 The DNS zone containing your DoH server hostname must support dynamic
 DNS updates, for the ACME DNS-01 TLS certificate challenge. You can
@@ -40,16 +35,16 @@ Run `ansible-playbook main.yml`
 
 The Ansible playbook installs:
 
-* `unbound`: This provides the default resolver used by the DoH proxy.
+* BIND: This provides the resolver used by the DoH proxy.
+
+* OpenResty: This provides NGINX with embedded LuaJIT.
+
+* `doh.lua`: An OpenResty module implementing DNS-over-HTTPS.
 
 * `dehydrated`: This is an ACME / Let's Encrypt client for obtaining a
   TLS certificate.
 
-* `OpenResty`: This provides NGINX with embedded LuaJIT.
-
-* `doh.lua`: An OpenResty module implementing DNS-over-HTTPS.
-
-The DoH server is running on https://your.doh.server.name:443/doh
+The DoH server is running on https://your.doh.server.name:443/
 
 There is also a DNS-over-TLS server on port 853.
 
@@ -78,18 +73,23 @@ After creating the production CA account, you should back up
 Testing
 -------
 
-`doh.pl` is a minimal DoH client.
+`doh.pl` is a minimal DNS-over-HTTPS client and
+`dot.pl` is a minimal DNS-over-TLS client.
 
 Usage:
 
         ./doh.pl [-k] <DoH URL> <domain> [type [class]]
 
+        ./dot.pl [-k] <DoT server> <domain> [type [class]]
+
 The `-k` option disables certificate validation. You will need
 this when the server is using a test certificate.
 
-Example:
+Examples:
 
-        ./doh.pl -k https://your.doh.server.name/doh example.com NS
+        ./doh.pl -k https://your.doh.server.name/ example.com NS
+
+        ./dot.pl -k your.doh.server.name example.com NS
 
 
 TODO
@@ -107,13 +107,17 @@ like to help!
 Meta
 ----
 
-`doh101` was written by Tony Finch <dot@dotat.at> at the IETF 101
-Hackathon in London, 17th - 18th March 2018.
+`doh101` was initially created by Tony Finch <dot@dotat.at> <fanf2@cam.ac.uk>
+at the IETF 101 Hackathon in London, 17th - 18th March 2018,
+and subsequently revised for use at the University of Cambridge.
 
 If you have comments / questions / contributions, send them to me via
 email or GitHub.
 
 This repo is available from https://github.com/fanf2/doh101
 and https://dotat.at/cgi/git/doh101.git
+
+You may do anything with this. It has no warranty.
+<https://creativecommons.org/publicdomain/zero/1.0/>
 
 ------------------------------------------------------------------------
