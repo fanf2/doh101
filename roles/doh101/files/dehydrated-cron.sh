@@ -1,2 +1,2 @@
 #!/bin/sh
-dehydrated -c
+dehydrated -c | logger --tag dehydrated --priority cron.info
