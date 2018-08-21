@@ -13,10 +13,10 @@
     update_cache: yes
     install_recommends: yes
   with_items:
+    - bind9
     - dehydrated
     - openresty
     - openresty-restydoc
-    - unbound
 - name: install dehydrated config
   copy:
     src: "{{item.src}}"
