@@ -1,5 +1,4 @@
 ---
 all:
   hosts:
-    your.doh.server.name:
-      resolver: 127.0.0.1
+    your.doh.server.name
