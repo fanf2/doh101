@@ -15,22 +15,28 @@ my %lwp;
 	SSL_verify_mode => 'SSL_VERIFY_NONE'
     }) if $k;
 
-sub hd {
-	my $d = shift;
-	printf "%d %s\n", length($d), unpack "H*", $d;
-	return $d;
-}
-
 my $server = shift;
-my $q = new Net::DNS::Packet(@ARGV);
-my $dns = encode_base64url hd $q->data;
+my $q = Net::DNS::Packet->new(@ARGV)->verbose;
+$q->header->rd(1);
+my $dns = encode_base64url $q->data;
 my $ua = LWP::UserAgent->new(%lwp);
 my $hr = $ua->get($server.'?dns='.$dns);
 printf "%s\n%s\n", $hr->status_line, $hr->headers_as_string;
 if ($hr->is_success) {
-	my $hc = hd $hr->content;
-	my $r = new Net::DNS::Packet(\$hc);
-	$r->print;
+	Net::DNS::Packet->new($hr->content_ref)->verbose;
 } else {
 	die $hr->content;
+}
+
+package Net::DNS::Packet;
+
+use Data::Hexdumper qw(hexdump);
+
+sub verbose {
+	my $p = shift;
+	my $len = length $p->data;
+	printf "  0x%04x = %d\n%s\n", $len, $len,
+	    hexdump $p->data, { suppress_warnings => 1 };
+	$p->print;
+	return $p;
 }
