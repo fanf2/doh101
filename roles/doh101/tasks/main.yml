@@ -62,3 +62,5 @@
   with_items:
     - doh
     - base64url
+  notify:
+    restart nginx
