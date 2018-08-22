@@ -224,5 +224,6 @@ elseif method == 'POST' then
    return doh_post()
 else
    ngx.header.Allow = "GET, HEAD, POST"
-   return err 'HTTP_NOT_ALLOWED'
+   return err('HTTP_NOT_ALLOWED',
+	      'method not allowed')
 end
