@@ -199,10 +199,12 @@ end
 local function doh_get()
    local q = r.get_query_args()
    if not q.dns then
-      return err('HTTP_BAD_REQUEST',
-		 'missing ?dns parameter')
+      -- informative errors for misdirected browsers
+      moan('missing ?dns= parameter')
+      return ngx.exec '@doh_no_dns'
+   else
+      return dodoh(ngx.decode_base64url(q.dns))
    end
-   return dodoh(ngx.decode_base64url(q.dns))
 end
 
 local function doh_post()

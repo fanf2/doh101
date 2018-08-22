@@ -70,6 +70,30 @@ After creating the production CA account, you should back up
 `/var/lib/dehydrated` to avoid accidentally wasting your quota.
 
 
+Error handling
+--------------
+
+`doh101` returns DNS 'not implemented' (RCODE = 4) if the OPCODE is
+not 0 (standard query) or if the query type is a meta-type (between
+128 and 254 inclusive).
+
+It returns DNS 'format error' (RCODE = 1) if it cannot parse the query
+name and type from the DNS request.
+
+It returns an HTTP 400 "bad request" error if it cannot get a bare
+minimum DNS request from the HTTP body.
+
+It returns an HTTP 415 "unsupported media type" error if a POST
+request does not have Content-Type `application/dns-message`.
+
+There is one special case which allows you to customize the respons
+that misdirected web browsers will get when they accidentally hit the
+DoH endpoint. If the request is GET and there is no `?dns=` URL
+parameter, `doh.lua` does an NGINX internal redirect to the named
+location `@doh_no_dns`. The `nginx.conf` is set up to turn this into a
+400 error with the response body from the file `doh_no_dns.html`.
+
+
 Testing
 -------
 
