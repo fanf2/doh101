@@ -50,7 +50,7 @@
     - src: privkey.pem
       dest: cert.key
 - name: nginx config
-  template:
+  copy:
     src: nginx.conf
     dest: /usr/local/openresty/nginx/conf/nginx.conf
   notify:
