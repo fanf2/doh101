@@ -27,7 +27,7 @@ end
 local function err(status, message)
    ngx.status = ngx[status]
    moan(message)
-   ngx.print(message)
+   ngx.print(message,"\n")
 end
 
 local function die(msg)
