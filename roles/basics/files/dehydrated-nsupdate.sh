@@ -17,6 +17,7 @@ case "$1" in
 	update del "$2" "$4"
         ;;
 "deploy_cert")
+	service openresty status &&
 	service openresty reload
         ;;
 "unchanged_cert")
