@@ -17,18 +17,26 @@ my %opt;
 $opt{PeerHost} = shift;
 $opt{PeerPort} = 853;
 
-my $q = Net::DNS::Packet->new(@ARGV)->verbose;
-$q->header->rd(1);
-my $qd = pack 'n', length $q->data;
-$qd .= $q->data;
 my $s = IO::Socket::SSL->new(%opt) or die "$SSL_ERROR\n";
-$s->print($qd);
-$s->sysread(my $l, 2) == 2
-    or die "could not read response length";
-my $len = unpack 'n', $l;
-$s->sysread(my $rd, $len) == $len
-    or die "truncated response";
-Net::DNS::Packet->new(\$rd)->verbose;
+my $n = 0;
+
+while (my @q = splice @ARGV, 0, 3) {
+	my $q = Net::DNS::Packet->new(@q)->verbose;
+	$q->header->rd(1);
+	my $qd = pack 'n', length $q->data;
+	$qd .= $q->data;
+	$s->print($qd);
+	$n++;
+}
+
+while ($n--) {
+	$s->sysread(my $l, 2) == 2
+	    or die "could not read response length";
+	my $len = unpack 'n', $l;
+	$s->sysread(my $rd, $len) == $len
+	    or die "truncated response";
+	Net::DNS::Packet->new(\$rd)->verbose;
+}
 
 package Net::DNS::Packet;
 
