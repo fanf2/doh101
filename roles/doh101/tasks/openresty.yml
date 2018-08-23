@@ -1,0 +1,13 @@
+---
+- name: apt openresty key
+  apt_key:
+    id: 97DB7443D5EDEB74
+    url: https://www.openresty.org/package/pubkey.gpg
+- name: apt openresty repo
+  copy:
+    src:  apt-openresty
+    dest: /etc/apt/sources.list.d/openresty.list
+- name: install packages
+  apt:
+    name: openresty
+    update_cache: yes

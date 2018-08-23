@@ -1,0 +1,16 @@
+---
+- name: nginx doh101 config
+  copy:
+    src: "{{item.src}}"
+    dest: /usr/local/openresty/{{item.dest}}
+  with_items:
+    - src:  doh.lua
+      dest: lualib
+    - src:  base64url.lua
+      dest: lualib
+    - src:  nginx.conf
+      dest: nginx/conf
+    - src:  doh_no_dns.html
+      dest: nginx/html
+  notify:
+    restart nginx

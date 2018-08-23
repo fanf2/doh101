@@ -1,0 +1,9 @@
+---
+- name: install dns server
+  apt:
+    name: bind9
+- name: dns server running
+  service:
+    name: bind9
+    enabled: yes
+    state: running

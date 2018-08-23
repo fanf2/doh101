@@ -1,0 +1,36 @@
+---
+- name: install packages
+  apt:
+    name: dehydrated
+- name: install dehydrated config
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    mode: 0755
+  with_items:
+    - src: dehydrated-nsupdate.sh
+      dest: /etc/dehydrated/nsupdate.sh
+    - src: dehydrated-dns.sh
+      dest: /etc/dehydrated/conf.d/dns.sh
+    - src: dehydrated-cron.sh
+      dest: /etc/cron.hourly/dehydrated
+    - src: dehydrated-nsupdate.key
+      dest: /etc/dehydrated/nsupdate.key
+- name: dehydrated hostname
+  copy:
+    content: "{{inventory_hostname}}\n"
+    dest: /etc/dehydrated/domains.txt
+- name: initialize dehydrated
+  command: dehydrated -c
+  args:
+    creates: /var/lib/dehydrated/certs/{{inventory_hostname}}/cert.pem
+- name: certificate links
+  file:
+    state: link
+    src: /var/lib/dehydrated/certs/{{inventory_hostname}}/{{item.src}}
+    dest: /usr/local/openresty/nginx/conf/{{item.dest}}
+  with_items:
+    - src: fullchain.pem
+      dest: cert.pem
+    - src: privkey.pem
+      dest: cert.key
