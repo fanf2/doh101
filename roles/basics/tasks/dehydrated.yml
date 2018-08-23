@@ -24,6 +24,10 @@
   command: dehydrated -c
   args:
     creates: /var/lib/dehydrated/certs/{{inventory_hostname}}/cert.pem
+- name: nginx config directory
+  file:
+    state: directory
+    path: /usr/local/openresty/nginx/conf/
 - name: certificate links
   file:
     state: link
