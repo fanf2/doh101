@@ -13,7 +13,7 @@ that sets up an OpenResty server and configures it to support
 Preparation
 -----------
 
-This role was developed for a Debian 9 "Stretch" VM.
+This role should work on Debian or Ubuntu.
 
 You need to edit `inventory.yml` to change `your.doh.server.name` to
 your VM's actual name.
