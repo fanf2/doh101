@@ -11,3 +11,7 @@
   apt:
     name: openresty
     update_cache: yes
+- name: logrotate for openresty
+  copy:
+    src: logrotate-openresty
+    dest: /etc/logrotate.d/openresty
