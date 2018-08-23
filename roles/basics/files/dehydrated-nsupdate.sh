@@ -7,6 +7,7 @@ set -o pipefail
 update() {
         printf '%s _acme-challenge.%s. 3 IN TXT "%s"\nsend\n' "$@" |
 		nsupdate -k /etc/dehydrated/nsupdate.key
+	sleep 3
 }
 
 case "$1" in
