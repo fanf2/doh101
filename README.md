@@ -33,16 +33,21 @@ Installation
 
 Run `ansible-playbook main.yml`
 
-The Ansible playbook installs:
+The Ansible playbook uses two roles:
 
-* BIND: This provides the resolver used by the DoH proxy.
+* `basics`: this is to support `doh101` in demo mode; it installs:
 
-* OpenResty: This provides NGINX with embedded LuaJIT.
+    * BIND: This provides the resolver used by the DoH proxy.
 
-* `doh.lua`: An OpenResty module implementing DNS-over-HTTPS.
+    * `dehydrated`: This is an ACME / Let's Encrypt client for
+      obtaining a TLS certificate.
 
-* `dehydrated`: This is an ACME / Let's Encrypt client for obtaining a
-  TLS certificate.
+* `doh101`: the main implementation, intended to be usable in
+  (experimental) production; it installs:
+
+    * OpenResty: This provides NGINX with embedded LuaJIT.
+
+    * `doh.lua`: An OpenResty module implementing DNS-over-HTTPS.
 
 The DoH server is running on https://your.doh.server.name:443/
 
