@@ -3,16 +3,16 @@
 use warnings;
 use strict;
 
+use Data::Hexdumper qw(hexdump);
 use IO::Socket::SSL;
 use Net::DNS;
 
 our $k; # like curl --insecure
 
 my %opt;
-%opt = (ssl_opts => {
-	verify_hostname => 0,
-	SSL_verify_mode => 'SSL_VERIFY_NONE'
-    }) if $k;
+%opt = (verify_hostname => 0,
+	SSL_verify_mode => SSL_VERIFY_NONE,
+    ) if $k;
 
 $opt{PeerHost} = shift;
 $opt{PeerPort} = 853;
@@ -21,12 +21,14 @@ my $q = Net::DNS::Packet->new(@ARGV)->verbose;
 $q->header->rd(1);
 my $qd = pack 'n', length $q->data;
 $qd .= $q->data;
-my $s = IO::Socket::SSL->new(%opt);
+my $s = IO::Socket::SSL->new(%opt) or die "$SSL_ERROR\n";
 $s->print($qd);
-$s->sysread(my $l, 2);
+$s->sysread(my $l, 2) == 2
+    or die "could not read response length";
 my $len = unpack 'n', $l;
-$s->sysread(my $rd, $len);
-my $r = Net::DNS::Packet->new(\$rd)->verbose;
+$s->sysread(my $rd, $len) == $len
+    or die "truncated response";
+Net::DNS::Packet->new(\$rd)->verbose;
 
 package Net::DNS::Packet;
 

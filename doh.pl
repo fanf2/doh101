@@ -12,7 +12,7 @@ our $k; # like curl --insecure
 my %lwp;
 %lwp = (ssl_opts => {
 	verify_hostname => 0,
-	SSL_verify_mode => 'SSL_VERIFY_NONE'
+	SSL_verify_mode => 0,
     }) if $k;
 
 my $server = shift;
