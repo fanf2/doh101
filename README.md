@@ -22,7 +22,7 @@ The DNS zone containing your DoH server hostname must support dynamic
 DNS updates, for the ACME DNS-01 TLS certificate challenge. You can
 create a TSIG key with `./keygen.sh <keyname>` which you will need to
 install on your DNS server, or if you have an existing TSIG key, copy
-it to `roles/doh101/files/dehydrated-nsupdate.key`.
+it to `roles/basics/files/dehydrated-nsupdate.key`.
 
 You might also need to edit `ansible.cfg` if your VM does not allow
 root login over `ssh`.
@@ -58,7 +58,7 @@ TLS certificates
 ----------------
 
 The `dehydrated` configuration is in
-`roles/doh101/files/dehydrated-dns.sh`. You can edit this to use a
+`roles/basics/files/dehydrated-dns.sh`. You can edit this to use a
 different challenge mechanism instead of ACME DNS-01.
 
 By default the TLS certificate is obtained from the Let's Encrypt
