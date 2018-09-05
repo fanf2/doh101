@@ -35,6 +35,6 @@
     dest: /usr/local/openresty/nginx/conf/{{item.dest}}
   with_items:
     - src: fullchain.pem
-      dest: cert.pem
+      dest: tls.crt
     - src: privkey.pem
-      dest: cert.key
+      dest: tls.key
