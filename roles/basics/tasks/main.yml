@@ -10,5 +10,9 @@
   copy:
     src: doh_no_dns.html
     dest: /usr/local/openresty/nginx/html/
+- name: remove placeholder home page
+  file:
+    state: absent
+    path: /usr/local/openresty/nginx/html/index.html
 - include: bind9.yml
 - include: dehydrated.yml
