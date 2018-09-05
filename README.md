@@ -42,6 +42,9 @@ The Ansible playbook uses two roles:
     * `dehydrated`: This is an ACME / Let's Encrypt client for
       obtaining a TLS certificate.
 
+	* A default error page for DoH requests that lack a `?dns=`
+	  parameter
+
 * `doh101`: the main implementation, intended to be usable in
   (experimental) production; it installs:
 
@@ -91,12 +94,14 @@ minimum DNS request from the HTTP body.
 It returns an HTTP 415 "unsupported media type" error if a POST
 request does not have Content-Type `application/dns-message`.
 
-There is one special case which allows you to customize the respons
+There is one special case which allows you to customize the response
 that misdirected web browsers will get when they accidentally hit the
 DoH endpoint. If the request is GET and there is no `?dns=` URL
 parameter, `doh.lua` does an NGINX internal redirect to the named
 location `@doh_no_dns`. The `nginx.conf` is set up to turn this into a
-400 error with the response body from the file `doh_no_dns.html`.
+400 error with the response body from the file `doh_no_dns.html`. If
+you are using the `doh101` role by itself, you will need to install
+your own version of this file.
 
 
 Testing

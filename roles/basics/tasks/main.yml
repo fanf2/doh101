@@ -1,3 +1,14 @@
 ---
+- name: nginx directories
+  file:
+    state: directory
+    path: /usr/local/openresty/nginx/{{item}}
+  with_items:
+    - conf
+    - html
+- name: default DoH 400 page
+  copy:
+    src: doh_no_dns.html
+    dest: /usr/local/openresty/nginx/html/
 - include: bind9.yml
 - include: dehydrated.yml

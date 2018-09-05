@@ -10,8 +10,6 @@
       dest: site/lualib
     - src:  nginx.conf
       dest: nginx/conf
-    - src:  doh_no_dns.html
-      dest: nginx/html
   notify:
     restart nginx
 - name: nginx running
