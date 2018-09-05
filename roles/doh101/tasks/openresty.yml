@@ -15,3 +15,7 @@
   copy:
     src: logrotate-openresty
     dest: /etc/logrotate.d/openresty
+- name: remove placeholder home page
+  file:
+    state: absent
+    path: /usr/local/openresty/nginx/html/index.html
