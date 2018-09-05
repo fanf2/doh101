@@ -8,6 +8,7 @@ require "base64url"
 ngx.HTTP_UNSUPPORTED_MEDIA_TYPE = 415
 
 local ct_doh = 'application/dns-message'
+local ct_compat = 'application/dns-udpwireformat'
 
 local DNS_EOH = 13
 
@@ -209,9 +210,12 @@ end
 
 local function doh_post()
    local h = r.get_headers()
-   if h['content-type'] ~= ct_doh then
+   if h['content-type'] ~= ct_doh and
+      h['content-type'] ~= ct_compat
+   then
       return err('HTTP_UNSUPPORTED_MEDIA_TYPE',
-		 'POST body must be application/dns-message')
+		 'POST body must be application/dns-message not ' ..
+		    h['content-type'])
    end
    r.read_body()
    return dodoh(r.get_body_data())
