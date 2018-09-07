@@ -8,6 +8,7 @@ use IO::Socket::SSL;
 use Net::DNS;
 
 our $k; # like curl --insecure
+our $p; # persist
 
 my %opt;
 %opt = (verify_hostname => 0,
@@ -31,12 +32,16 @@ while (my @q = splice @ARGV, 0, 3) {
 
 while ($n--) {
 	$s->sysread(my $l, 2) == 2
-	    or die "could not read response length";
+	    or die "could not read response length: $!\n";
 	my $len = unpack 'n', $l;
 	$s->sysread(my $rd, $len) == $len
-	    or die "truncated response";
+	    or die "truncated response\n";
 	Net::DNS::Packet->new(\$rd)->verbose;
 }
+
+$s->sysread(my $l, 2) == 2
+    or die "waited for connection to close: $!\n"
+    if $p;
 
 package Net::DNS::Packet;
 
