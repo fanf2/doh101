@@ -10,6 +10,8 @@
       dest: site/lualib
     - src:  nginx.conf
       dest: nginx/conf
+    - src:  nginx-tls.conf
+      dest: nginx/conf
   notify:
     restart nginx
 - name: nginx running
