@@ -34,3 +34,5 @@
       dest: tls.crt
     - src: privkey.pem
       dest: tls.key
+    - src: chain.pem
+      dest: ca.crt
