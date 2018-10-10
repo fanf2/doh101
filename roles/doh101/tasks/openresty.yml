@@ -15,6 +15,7 @@
   copy:
     src: logrotate-openresty
     dest: /etc/logrotate.d/openresty
+    mode: 0644
 - name: remove placeholder home page
   file:
     state: absent
