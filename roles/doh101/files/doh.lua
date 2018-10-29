@@ -184,7 +184,7 @@ local function dodoh(q)
    end
    -- DNS-over-TCP query length
    q = put16(qlen)..q
-   local addr = ngx.var.server_addr
+   local addr = ngx.var.resolver
    if addr:find(':') then
       addr = '['..addr..']'
    end
