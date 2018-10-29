@@ -4,36 +4,16 @@ doh101: DNS-over-HTTPS using OpenResty, from the IETF 101 Hackathon
 [OpenResty](https://openresty.org/) is a distribution of NGINX which
 includes LuaJIT and a lot of web application support libraries.
 
-This repository contains an [Ansible](https://www.ansible.com) role
-that sets up an OpenResty server and configures it to support
-[DNS-over-TLS](https://tools.ietf.org/html/rfc7858) and
-[DNS-over-HTTPS](https://tools.ietf.org/html/rfc8484).
+This repository contains [Ansible](https://www.ansible.com) roles
+that set up an OpenResty server and configures it to support
+[DNS-over-TLS (DoT)](https://tools.ietf.org/html/rfc7858) and
+[DNS-over-HTTPS (DoH)](https://tools.ietf.org/html/rfc8484).
 
 
-Preparation
------------
+Components
+----------
 
-This role should work on Debian or Ubuntu.
-
-You need to edit `inventory.yml` to change `your.doh.server.name` to
-your VM's actual name.
-
-The DNS zone containing your DoH server hostname must support dynamic
-DNS updates, for the ACME DNS-01 TLS certificate challenge. You can
-create a TSIG key with `./keygen.sh <keyname>` which you will need to
-install on your DNS server, or if you have an existing TSIG key, copy
-it to `roles/basics/files/dehydrated-nsupdate.key`.
-
-You might also need to edit `ansible.cfg` if your VM does not allow
-root login over `ssh`.
-
-
-Installation
-------------
-
-Run `ansible-playbook main.yml`
-
-The Ansible playbook uses two roles:
+There are two Ansible roles:
 
 * `basics`: this is to support `doh101` in demo mode; it installs:
 
@@ -52,9 +32,50 @@ The Ansible playbook uses two roles:
 
     * `doh.lua`: An OpenResty module implementing DNS-over-HTTPS.
 
-The DoH server is running on https://your.doh.server.name:443/
+The DoH server is running on port 443 at the URI template
+`https://your.doh.server.name/{?dns}`
 
-There is also a DNS-over-TLS server on port 853.
+The DoT server is on port 853.
+
+
+Back-end DNS server
+-------------------
+
+The `doh101` role acts as a front-end proxy to a back-end DNS-over-TCP
+(Do53) server. It is designed to run on the same host as a recursive
+server which has different BIND views on different IP addresses. (For
+example, in my production setup I have a main RPZ filtered view and a
+raw unfiltered view.)
+
+In order to make the DoT and DoH views consistent with the Do53 views,
+the back-end IP address that `doh101` connects to on port 53 is the
+same as the front-end IP address that the client connected to on port
+443 or 853.
+
+This can be changed in `nginx.conf`:
+
+  * for DoT, replace `$server_addr` in the `proxy_pass` directives;
+
+  * for DoH, replace `$server_addr` in the `set $resolver` directive.
+
+
+Demo mode setup
+---------------
+
+The roles should work on Debian or Ubuntu.
+
+You need to edit `inventory.yml` to change `your.doh.server.name` to
+your VM's actual name.
+
+The DNS zone containing your DoH server hostname must support dynamic
+DNS updates, for the ACME DNS-01 TLS certificate challenge (see
+below). You can create a TSIG key with `./keygen.sh <keyname>` which
+you will need to install on your DNS server, or if you have an
+existing TSIG key, copy it to
+`roles/basics/files/dehydrated-nsupdate.key`.
+
+You might also need to edit `ansible.cfg` if your VM does not allow
+root login over `ssh`.
 
 
 TLS certificates
@@ -62,7 +83,8 @@ TLS certificates
 
 The `dehydrated` configuration is in
 `roles/basics/files/dehydrated-dns.sh`. You can edit this to use a
-different challenge mechanism instead of ACME DNS-01.
+different challenge mechanism instead of ACME DNS-01. Please let me
+know if you do this!
 
 By default the TLS certificate is obtained from the Let's Encrypt
 test/staging CA, in order to avoid accidentally using up your
@@ -78,8 +100,8 @@ After creating the production CA account, you should back up
 `/var/lib/dehydrated` to avoid accidentally wasting your quota.
 
 
-Error handling
---------------
+DoH error handling
+------------------
 
 `doh101` returns DNS 'not implemented' (RCODE = 4) if the OPCODE is
 not 0 (standard query) or if the query type is a meta-type (between
