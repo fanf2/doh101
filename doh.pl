@@ -21,7 +21,8 @@ $q->header->rd(1);
 my $dns = encode_base64url $q->data;
 my $ua = LWP::UserAgent->new(%lwp);
 my $hr = $ua->get($server.'?dns='.$dns);
-printf "%s\n%s\n", $hr->status_line, $hr->headers_as_string;
+printf "%s%s\n%s\n", $hr->request->as_string,
+    $hr->status_line, $hr->headers_as_string;
 if ($hr->is_success) {
 	Net::DNS::Packet->new($hr->content_ref)->verbose;
 } else {
