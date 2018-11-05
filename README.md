@@ -126,6 +126,25 @@ you are using the `doh101` role by itself, you will need to install
 your own version of this file.
 
 
+Cross-origin resource sharing
+-----------------------------
+
+In order to allow `doh101` to be used as a service by in-browser
+JavaScript apps, it sets CORS headers including
+`Access-Control-Allow-Origin: '*'`.
+
+DoH POST requests require a `Content-Type:` header field which is not
+permitted for simple requests, so browsers send a preflight OPTIONS
+request to check that the POST is permitted. The preflight OPTIONS
+response from `doh101` allows the POST request to go ahead.
+
+DoH GET requests count as "simple requests" from the point of view of
+CORS, so they do not require any special support on the server.
+However, because the query string is usually logged by the web server,
+DoH GET requests have somewhat worse privacy properties than POST
+requests, which justifies the extra CORS complexity for POST.
+
+
 Testing
 -------
 
