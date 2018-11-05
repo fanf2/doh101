@@ -1,4 +1,5 @@
 local r = ngx.req
+local h = ngx.header
 local band = bit.band
 local rshift = bit.rshift
 local char = string.char
@@ -130,12 +131,13 @@ end
 local function reply(r)
    local ttl = get_ttl(r)
    if ttl ~= nil then
-      ngx.header.Cache_Control = ("max-age=%d"):format(ttl)
+      h.Cache_Control = ("max-age=%d"):format(ttl)
    else
-      ngx.header.Cache_Control = "no-cache, no-store"
+      h.Cache_Control = "no-cache, no-store"
    end
-   ngx.header.Content_Type = ct_doh
-   ngx.header.Content_Length = tostring(#r)
+   h.Access_Control_Allow_Origin = '*'
+   h.Content_Type = ct_doh
+   h.Content_Length = tostring(#r)
    return ngx.print(r)
 end
 
@@ -221,15 +223,24 @@ local function doh_post()
    return dodoh(r.get_body_data())
 end
 
+local allowed_methods = 'OPTIONS, HEAD, GET, POST'
 local method = r.get_method()
-if method == 'HEAD' then
+if method == 'OPTIONS' then
+   h.Access_Control_Allow_Origin = '*'
+   h.Access_Control_Allow_Methods = allowed_methods
+   h.Access_Control_Allow_Headers = 'Content-Type'
+   h.Access_Control_Max_Age = 86400
+   h.Content_Type = 'text/plain'
+   h.Content_Length = 0
+   return ngx.exit(ngx.HTTP_NO_CONTENT)
+elseif method == 'HEAD' then
    return
 elseif method == 'GET' then
    return doh_get()
 elseif method == 'POST' then
    return doh_post()
 else
-   ngx.header.Allow = "GET, HEAD, POST"
+   h.Allow = allowed_methods
    return err('HTTP_NOT_ALLOWED',
 	      'method not allowed')
 end
