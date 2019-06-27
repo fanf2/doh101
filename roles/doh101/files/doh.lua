@@ -233,9 +233,7 @@ if method == 'OPTIONS' then
    h.Content_Type = 'text/plain'
    h.Content_Length = 0
    return ngx.exit(ngx.HTTP_NO_CONTENT)
-elseif method == 'HEAD' then
-   return
-elseif method == 'GET' then
+elseif method == 'GET' or method == 'HEAD' then
    return doh_get()
 elseif method == 'POST' then
    return doh_post()
