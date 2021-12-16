@@ -200,7 +200,7 @@ local function dodoh(q)
 end
 
 local function doh_get()
-   local q = r.get_query_args()
+   local q = r.get_uri_args()
    if not q.dns then
       -- informative errors for misdirected browsers
       moan('missing ?dns= parameter')
